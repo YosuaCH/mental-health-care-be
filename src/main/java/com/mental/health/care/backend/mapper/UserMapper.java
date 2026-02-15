@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper {
     public User toModel(UserCreateDTO dto) {
-        if (dto == null) return null;
-
         return User.builder()
                 .username(dto.getUsername())
                 .email(dto.getEmail())
@@ -20,8 +18,6 @@ public class UserMapper {
     }
 
     public UserResponseDTO toResponseDTO(User user) {
-        if (user == null) return null;
-
         return UserResponseDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
