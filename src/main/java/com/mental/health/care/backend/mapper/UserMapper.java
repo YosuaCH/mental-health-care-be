@@ -2,14 +2,14 @@ package com.mental.health.care.backend.mapper;
 
 import com.mental.health.care.backend.dto.UserCreateDTO;
 import com.mental.health.care.backend.dto.UserResponseDTO;
-import com.mental.health.care.backend.model.User;
+import com.mental.health.care.backend.model.Client;
 import com.mental.health.care.backend.model.Role;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
-    public User toModel(UserCreateDTO dto) {
-        return User.builder()
+    public Client toModel(UserCreateDTO dto) {
+        return Client.builder()
                 .username(dto.getUsername())
                 .email(dto.getEmail())
                 .password(dto.getPassword())
@@ -17,7 +17,7 @@ public class UserMapper {
                 .build();
     }
 
-    public UserResponseDTO toResponseDTO(User user) {
+    public UserResponseDTO toResponseDTO(Client user) {
         return UserResponseDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
