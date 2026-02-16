@@ -3,7 +3,9 @@ package com.mental.health.care.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.mental.health.care.backend.dto.UserCreateDTO;
 import com.mental.health.care.backend.dto.UserRequestLoginDTO;
@@ -35,11 +37,12 @@ public class UserService {
     }
 
     public UserResponseDTO login(UserRequestLoginDTO dto) {
-        User user = userRepository.findByUsername(dto.getUsername())
-                .orElseThrow(() -> new RuntimeException("User tidak ditemukan dengan email: " + dto.getUsername()));
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new RuntimeException("User tidak ditemukan dengan email: " + dto.getEmail()));
 
         if (!user.getPassword().equals(dto.getPassword())) {
-            throw new RuntimeException("Email atau Password salah!");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                "Email atau Password salah!");
         }
 
         return userMapper.toResponseDTO(user);
