@@ -15,6 +15,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true) 
 @ToString(callSuper = true)
 public class Client extends BaseUser {
-    @Indexed(unique = true)
+    @Indexed(unique = true, sparse = true)
     private String username;
 }

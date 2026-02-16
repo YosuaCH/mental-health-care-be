@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true) 
 @ToString(callSuper = true)
 public class Psikiater extends BaseUser {
-    @Indexed(unique = true)
+    @Indexed(unique = true, sparse = true)
     private String noStr;
     private String nomorWa;
     private String namaLengkap;

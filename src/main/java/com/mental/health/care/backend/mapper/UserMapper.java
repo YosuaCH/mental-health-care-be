@@ -1,28 +1,28 @@
 package com.mental.health.care.backend.mapper;
 
-import com.mental.health.care.backend.dto.UserCreateDTO;
-import com.mental.health.care.backend.dto.UserResponseDTO;
-import com.mental.health.care.backend.model.Client;
-import com.mental.health.care.backend.model.Role;
 import org.springframework.stereotype.Component;
 
-@Component
-public class UserMapper {
-    public Client toModel(UserCreateDTO dto) {
-        return Client.builder()
-                .username(dto.getUsername())
-                .email(dto.getEmail())
-                .password(dto.getPassword())
-                .role(Role.USER)
-                .build();
-    }
+import com.mental.health.care.backend.dto.UserResponseDTO;
+import com.mental.health.care.backend.model.BaseUser;
+import com.mental.health.care.backend.model.Psikiater;
 
-    public UserResponseDTO toResponseDTO(Client user) {
-        return UserResponseDTO.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .role(user.getRole() != null ? user.getRole().name() : "USER")
-                .build();
+import lombok.RequiredArgsConstructor;
+
+import com.mental.health.care.backend.model.Client;
+
+@Component
+@RequiredArgsConstructor
+public class UserMapper {
+    private final ClientMapper clientMapper;
+    private final PsikiaterMapper psikiaterMapper;
+
+    public UserResponseDTO toResponseDTO(BaseUser user) {
+        if (user instanceof Client client) {
+            return clientMapper.toResponseDTO(client); 
+        } 
+        else if (user instanceof Psikiater psikiater) {
+            return psikiaterMapper.toResponseDTO(psikiater); 
+        }
+        return null;
     }
 }

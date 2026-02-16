@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class UserCreateDTO {
+public class ClientCreateDTO {
 
     @NotBlank(message = "Username tidak boleh kosong")
     private String username;

@@ -11,7 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserResponseDTO {
     private String id;
-    private String username;
     private String email;
     private String role;
+
+    private String username;    
+    private String namaLengkap;
+    private String noStr;
+    private String nomorWa;
 }
