@@ -38,11 +38,11 @@ public class UserService {
 
     public UserResponseDTO login(UserRequestLoginDTO dto) {
         User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new RuntimeException("User tidak ditemukan dengan email: " + dto.getEmail()));
-
+                .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Email belum terdaftar atau salah!"
+                ));
         if (!user.getPassword().equals(dto.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
-                "Email atau Password salah!");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password salah!");
         }
 
         return userMapper.toResponseDTO(user);
