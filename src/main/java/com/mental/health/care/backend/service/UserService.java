@@ -35,6 +35,9 @@ public class UserService {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email sudah terdaftar!");
         }
+        if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username sudah digunakan!");
+        }
 
         Client client = clientMapper.toModel(dto);
         Client savedClient = userRepository.save(client);
