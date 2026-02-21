@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WebResponseLoginDTO {
+public class WebResponseDTO {
     private String message;
     private Object data;
 }

@@ -1,21 +1,17 @@
-package com.mental.health.care.backend.model;
+package com.mental.health.care.backend.dto;
+
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @NoArgsConstructor
-@Document(collection = "mbti_types")
-public class MbtiType {
-
-    @Id
-    private String id;
-
+@AllArgsConstructor
+@Builder
+public class MbtiTypeResponseDTO {
     private String code;
     private String title;
     private String desc;
