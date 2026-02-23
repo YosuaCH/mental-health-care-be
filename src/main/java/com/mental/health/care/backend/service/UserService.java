@@ -3,6 +3,7 @@ package com.mental.health.care.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,9 +15,11 @@ import com.mental.health.care.backend.dto.UserResponseDTO;
 import com.mental.health.care.backend.mapper.ClientMapper;
 import com.mental.health.care.backend.mapper.PsikiaterMapper;
 import com.mental.health.care.backend.mapper.UserMapper;
+import com.mental.health.care.backend.model.AuthProvider;
 import com.mental.health.care.backend.model.BaseUser;
 import com.mental.health.care.backend.model.Client;
 import com.mental.health.care.backend.model.Psikiater;
+import com.mental.health.care.backend.model.Role;
 import com.mental.health.care.backend.repository.UserRepository;
 
 
@@ -62,6 +65,12 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED, "Email tidak ditemukan!"
                 ));
+
+        if (user.getAuthProvider() != AuthProvider.LOCAL) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                "Akun ini terdaftar via Google. Gunakan login Google.");
+        }
+
         if (!user.getPassword().equals(dto.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password salah!");
         }
@@ -74,5 +83,43 @@ public class UserService {
                 .stream()
                 .map(userMapper::toResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    public UserResponseDTO processGoogleUser(String email, String providerId) {
+        Optional<BaseUser> existingUser = userRepository.findByEmail(email);
+
+        BaseUser user;
+
+        if (existingUser.isPresent()) {
+            user = existingUser.get();
+            
+            if (user.getAuthProvider() != AuthProvider.GOOGLE) {
+                throw new RuntimeException("manual_user");
+            }
+        
+            if (user.getProviderId() == null) {
+                user.setProviderId(providerId);
+                userRepository.save(user);
+            }
+        } else {
+            user = Client.builder()
+                    .email(email)
+                    .providerId(providerId)
+                    .authProvider(AuthProvider.GOOGLE)
+                    .role(Role.CLIENT)
+                    .username(generateUniqueUsername(email))
+                    .build();
+            user = userRepository.save(user);
+        }
+
+        return userMapper.toResponseDTO(user);
+    }
+
+    private String generateUniqueUsername(String email) {
+        String baseUsername = email.split("@")[0];
+        if (userRepository.findByUsername(baseUsername).isPresent()) {
+            return baseUsername + System.currentTimeMillis() % 1000;
+        }
+        return baseUsername;
     }
 }

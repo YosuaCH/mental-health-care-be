@@ -13,6 +13,7 @@ public class UserResponseDTO {
     private String id;
     private String email;
     private String role;
+    private String authProvider;
 
     private String username;    
     private String namaLengkap;

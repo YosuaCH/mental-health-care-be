@@ -5,6 +5,7 @@ import com.mental.health.care.backend.dto.UserResponseDTO;
 import org.springframework.stereotype.Component;
 
 import com.mental.health.care.backend.dto.PsikiaterCreateDTO;
+import com.mental.health.care.backend.model.AuthProvider;
 import com.mental.health.care.backend.model.Psikiater;
 import com.mental.health.care.backend.model.Role;
 
@@ -18,6 +19,7 @@ public class PsikiaterMapper {
                 .noStr(dto.getNoStr())
                 .role(Role.PSIKIATER)
                 .nomorWa(dto.getNomorWa())
+                .authProvider(AuthProvider.LOCAL)
                 .build();
     }
 
@@ -29,6 +31,7 @@ public class PsikiaterMapper {
                 .role(psikiater.getRole() != null ? psikiater.getRole().name() : "PSIKIATER")
                 .noStr(psikiater.getNoStr())
                 .nomorWa(psikiater.getNomorWa())
+                .authProvider(psikiater.getAuthProvider() != null ? psikiater.getAuthProvider().name() : null)
                 .build();
     }
 }
