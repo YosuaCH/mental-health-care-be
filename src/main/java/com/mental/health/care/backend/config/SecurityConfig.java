@@ -32,7 +32,7 @@ public class SecurityConfig {
                 return config;
             }))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/register/**", "/auth/login", "/oauth2/**").permitAll()
+                .requestMatchers("/auth/register/**", "/auth/login", "/oauth2/**", "/api/ebooks/**").permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(exception -> exception
