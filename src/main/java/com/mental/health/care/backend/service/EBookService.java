@@ -34,7 +34,18 @@ public class EBookService {
 
             if (response != null && response.getItems() != null) {
                 return response.getItems().stream()
-                        .map(eBookMapper::toDto)
+                        .map(item -> {
+                            EBookDTO dto = eBookMapper.toDto(item);
+                        
+                            if (dto.getThumbnail() != null) {
+                                String highResImg = dto.getThumbnail()
+                                    .replace("http://", "https://")
+                                    .replace("zoom=1", "zoom=2");
+                                dto.setThumbnail(highResImg);
+                            }
+                            
+                            return dto;
+                        })
                         .collect(Collectors.toList());
             }
         } catch (Exception e) {
