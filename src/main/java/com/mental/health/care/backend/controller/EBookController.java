@@ -21,7 +21,7 @@ public class EBookController {
 
     @GetMapping
     public ResponseEntity<List<EBookDTO>> getMentalHealthBooks() {
-        List<EBookDTO> books = eBookService.getMentalHealthBooks("mental health psychology self improvement");
+        List<EBookDTO> books = eBookService.getMentalHealthBooks("kesehatan+mental|mengatasi+kecemasan|depresi|jenis+kepribadian");
         return ResponseEntity.ok(books);
     }
 }
