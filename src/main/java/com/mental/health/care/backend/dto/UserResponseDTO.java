@@ -19,4 +19,5 @@ public class UserResponseDTO {
     private String namaLengkap;
     private String noStr;
     private String nomorWa;
+    private Long hargaKonsultasi;
 }

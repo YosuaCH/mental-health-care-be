@@ -19,6 +19,7 @@ public class PsikiaterMapper {
                 .noStr(dto.getNoStr())
                 .role(Role.PSIKIATER)
                 .nomorWa(dto.getNomorWa())
+                .hargaKonsultasi(dto.getHargaKonsultasi())
                 .authProvider(AuthProvider.LOCAL)
                 .build();
     }
@@ -31,6 +32,7 @@ public class PsikiaterMapper {
                 .role(psikiater.getRole() != null ? psikiater.getRole().name() : "PSIKIATER")
                 .noStr(psikiater.getNoStr())
                 .nomorWa(psikiater.getNomorWa())
+                .hargaKonsultasi(psikiater.getHargaKonsultasi())
                 .authProvider(psikiater.getAuthProvider() != null ? psikiater.getAuthProvider().name() : null)
                 .build();
     }

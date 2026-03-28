@@ -27,4 +27,6 @@ public class PsikiaterCreateDTO {
 
     @NotBlank(message = "Nomor WhatsApp wajib diisi")
     private String nomorWa;
+
+    private Long hargaKonsultasi;
 }

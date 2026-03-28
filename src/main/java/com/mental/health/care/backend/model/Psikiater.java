@@ -18,4 +18,5 @@ public class Psikiater extends BaseUser {
     private String noStr;
     private String nomorWa;
     private String namaLengkap;
+    private Long hargaKonsultasi;
 }
