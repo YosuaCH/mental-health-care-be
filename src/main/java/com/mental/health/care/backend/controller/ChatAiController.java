@@ -1,15 +1,15 @@
 package com.mental.health.care.backend.controller;
 
-import com.mental.health.care.backend.service.ChatService;
+import com.mental.health.care.backend.service.ChatAiService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/ai")
-public class ChatController {
+public class ChatAiController {
 
-    private final ChatService chatService;
+    private final ChatAiService chatService;
 
-    public ChatController(ChatService chatService) {
+    public ChatAiController(ChatAiService chatService) {
         this.chatService = chatService;
     }
     

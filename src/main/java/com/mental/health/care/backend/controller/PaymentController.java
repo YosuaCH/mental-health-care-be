@@ -32,8 +32,8 @@ public class PaymentController {
     }
 
     @PostMapping("/simulate-success")
-    public ResponseEntity<Map<String, String>> simulateSuccess(@RequestParam String noStr) {
-        paymentService.processPayment(noStr);
+    public ResponseEntity<Map<String, String>> simulateSuccess(@RequestParam String patientId, @RequestParam String noStr) {
+        paymentService.processPayment(patientId, noStr);
         
         Map<String, String> response = new HashMap<>();
         response.put("message", "Pembayaran berhasil diverifikasi oleh server untuk STR: " + noStr);

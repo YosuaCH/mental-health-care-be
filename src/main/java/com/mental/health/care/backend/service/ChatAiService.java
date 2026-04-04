@@ -12,14 +12,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
-public class ChatService {
+public class ChatAiService {
 
     private final GoogleGenAiChatModel chatModel;
 
     @Value("classpath:ai-rules.txt")
     private Resource systemRulesResource;
 
-    public ChatService(GoogleGenAiChatModel chatModel) {
+    public ChatAiService(GoogleGenAiChatModel chatModel) {
         this.chatModel = chatModel;
     }
 
