@@ -20,5 +20,6 @@ public class ChatMessage {
     private String roomId;
     private String senderName;
     private String content;
+    private boolean isRead;
     private Date timestamp;
 }

@@ -14,6 +14,7 @@ public class ChatMessageMapper {
                 .roomId(dto.getRoomId())
                 .senderName(dto.getSenderName())
                 .content(dto.getContent())
+                .isRead(dto.isRead())
                 .timestamp(new Date()) 
                 .build();
     }
@@ -23,6 +24,7 @@ public class ChatMessageMapper {
                 .roomId(entity.getRoomId())
                 .senderName(entity.getSenderName())
                 .content(entity.getContent())
+                .isRead(entity.isRead())
                 .timestamp(entity.getTimestamp().toString())
                 .build();
     }

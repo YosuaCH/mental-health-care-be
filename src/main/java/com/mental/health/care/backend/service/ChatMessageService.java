@@ -66,4 +66,22 @@ public class ChatMessageService {
         }
         repository.deleteByRoomId(roomId);
     }
+
+    public void markRoomAsRead(String roomId, String readerName) {
+        List<ChatMessage> unreadMessages = repository.findByRoomIdAndIsRead(roomId, false);
+        boolean changed = false;
+        for (ChatMessage msg : unreadMessages) {
+            if (!msg.getSenderName().equals(readerName)) {
+                msg.setRead(true);
+                changed = true;
+            }
+        }
+        if (changed) {
+            repository.saveAll(unreadMessages);
+        }
+    }
+
+    public long getUnreadCount(String roomId, String viewerName) {
+        return repository.countByRoomIdAndSenderNameNotAndIsRead(roomId, viewerName, false);
+    }
 }

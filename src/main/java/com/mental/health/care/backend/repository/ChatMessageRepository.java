@@ -10,4 +10,6 @@ import java.util.List;
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
     List<ChatMessage> findByRoomIdOrderByTimestampAsc(String roomId);
     void deleteByRoomId(String roomId);
+    List<ChatMessage> findByRoomIdAndIsRead(String roomId, boolean isRead);
+    long countByRoomIdAndSenderNameNotAndIsRead(String roomId, String senderName, boolean isRead);
 }

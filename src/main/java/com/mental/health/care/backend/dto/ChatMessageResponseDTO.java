@@ -13,5 +13,6 @@ public class ChatMessageResponseDTO {
     private String roomId;
     private String senderName;
     private String content;
+    private boolean isRead;
     private String timestamp;
 }
