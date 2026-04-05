@@ -34,6 +34,7 @@ public class PsikiaterMapper {
                 .nomorWa(psikiater.getNomorWa())
                 .hargaKonsultasi(psikiater.getHargaKonsultasi())
                 .authProvider(psikiater.getAuthProvider() != null ? psikiater.getAuthProvider().name() : null)
+                .picture(psikiater.getPicture())
                 .build();
     }
 }

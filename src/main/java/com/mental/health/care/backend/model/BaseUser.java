@@ -28,4 +28,5 @@ public abstract class BaseUser {
     private AuthProvider authProvider = AuthProvider.LOCAL;
 
     private String providerId;
+    private String picture;
 }

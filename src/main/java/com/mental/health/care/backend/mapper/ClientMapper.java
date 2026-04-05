@@ -26,6 +26,7 @@ public class ClientMapper {
                 .email(user.getEmail())
                 .role(user.getRole() != null ? user.getRole().name() : "USER")
                 .authProvider(user.getAuthProvider() != null ? user.getAuthProvider().name() : null)
+                .picture(user.getPicture())
                 .build();
     }
 }

@@ -20,4 +20,5 @@ public class UserResponseDTO {
     private String noStr;
     private String nomorWa;
     private Long hargaKonsultasi;
+    private String picture;
 }

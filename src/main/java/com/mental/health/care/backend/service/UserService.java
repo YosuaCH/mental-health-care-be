@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.mental.health.care.backend.dto.ClientCreateDTO;
 import com.mental.health.care.backend.dto.PsikiaterCreateDTO;
 import com.mental.health.care.backend.dto.UserRequestLoginDTO;
+import com.mental.health.care.backend.dto.UpdateProfileDTO;
 import com.mental.health.care.backend.dto.UserResponseDTO;
 import com.mental.health.care.backend.mapper.ClientMapper;
 import com.mental.health.care.backend.mapper.PsikiaterMapper;
@@ -21,6 +22,7 @@ import com.mental.health.care.backend.model.Client;
 import com.mental.health.care.backend.model.Psikiater;
 import com.mental.health.care.backend.model.Role;
 import com.mental.health.care.backend.repository.UserRepository;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 
 import lombok.RequiredArgsConstructor;
@@ -113,6 +115,45 @@ public class UserService {
         }
 
         return userMapper.toResponseDTO(user);
+    }
+
+    public UserResponseDTO updateProfileFromPrincipal(Object principal, UpdateProfileDTO dto) {
+        String userId = null;
+
+        if (principal instanceof UserResponseDTO localUser) {
+            userId = localUser.getId();
+        } else if (principal instanceof OAuth2User oauthUser) {
+            String email = oauthUser.getAttribute("email");
+            BaseUser user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Google tidak ditemukan!"));
+            userId = user.getId();
+        }
+
+        if (userId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User tidak teridentifikasi!");
+        }
+
+        return updateProfile(userId, dto);
+    }
+
+    public UserResponseDTO updateProfile(String userId, UpdateProfileDTO dto) {
+        BaseUser user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User tidak ditemukan!"));
+
+        if (dto.getName() != null && !dto.getName().isEmpty()) {
+            if (user instanceof Client client) {
+                client.setUsername(dto.getName());
+            } else if (user instanceof Psikiater psikiater) {
+                psikiater.setNamaLengkap(dto.getName());
+            }
+        }
+
+        if (dto.getPicture() != null) {
+            user.setPicture(dto.getPicture());
+        }
+
+        BaseUser savedUser = userRepository.save(user);
+        return userMapper.toResponseDTO(savedUser);
     }
 
     private String generateUniqueUsername(String email) {
