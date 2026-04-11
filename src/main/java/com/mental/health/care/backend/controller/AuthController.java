@@ -87,12 +87,7 @@ public class AuthController {
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, 
                             SecurityContextHolder.getContext());
 
-        String nameToShow = (userResponse.getUsername() != null) 
-                            ? userResponse.getUsername() 
-                            : userResponse.getNamaLengkap();
-
         return WebResponseDTO.builder()
-                .message("Login Berhasil, Selamat Datang " + nameToShow)
                 .data(userResponse)
                 .build();
     }
