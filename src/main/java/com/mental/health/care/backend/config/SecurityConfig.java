@@ -32,7 +32,7 @@ public class SecurityConfig {
                 return config;
             }))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/register/**", "/auth/login", "/auth/forgot-password", "/auth/reset-password", "/oauth2/**").permitAll()
+                .requestMatchers("/error", "/auth/register/**", "/auth/login", "/auth/forgot-password", "/auth/reset-password", "/oauth2/**").permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(exception -> exception

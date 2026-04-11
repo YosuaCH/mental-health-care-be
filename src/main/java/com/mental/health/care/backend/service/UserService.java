@@ -95,6 +95,10 @@ public class UserService {
         BaseUser user = userRepository.findByEmail(resetToken.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User tidak ditemukan!"));
 
+        if (user.getPassword().equals(newPassword)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sandi baru tidak boleh sama dengan sandi lama!");
+        }
+
         user.setPassword(newPassword);
         userRepository.save(user);
         tokenRepository.delete(resetToken);
