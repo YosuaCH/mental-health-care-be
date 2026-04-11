@@ -22,7 +22,12 @@ import com.mental.health.care.backend.model.Client;
 import com.mental.health.care.backend.model.Psikiater;
 import com.mental.health.care.backend.model.Role;
 import com.mental.health.care.backend.repository.UserRepository;
+import com.mental.health.care.backend.repository.PasswordResetTokenRepository;
+import com.mental.health.care.backend.model.PasswordResetToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 import lombok.RequiredArgsConstructor;
@@ -32,9 +37,80 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordResetTokenRepository tokenRepository;
     private final UserMapper userMapper;
     private final ClientMapper clientMapper;
     private final PsikiaterMapper psikiaterMapper;
+
+    public void createPasswordResetToken(String email) {
+        BaseUser user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Email tidak terdaftar!"));
+
+        if (user.getAuthProvider() != AuthProvider.LOCAL) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Akun Google tidak dapat diatur ulang sandinya.");
+        }
+
+        tokenRepository.deleteByEmail(email);
+
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken resetToken = PasswordResetToken.builder()
+                .email(email)
+                .token(token)
+                .expiryDate(LocalDateTime.now().plusMinutes(15))
+                .build();
+
+        tokenRepository.save(resetToken);
+    }
+
+    public String generateResetToken(String email) {
+        BaseUser user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Email tidak terdaftar!"));
+
+        if (user.getAuthProvider() != AuthProvider.LOCAL) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Akun Google tidak dapat diatur ulang sandinya.");
+        }
+
+        tokenRepository.deleteByEmail(email);
+
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken resetToken = PasswordResetToken.builder()
+                .email(email)
+                .token(token)
+                .expiryDate(LocalDateTime.now().plusMinutes(15))
+                .build();
+
+        tokenRepository.save(resetToken);
+        return token;
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        PasswordResetToken resetToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Token tidak valid!"));
+
+        if (resetToken.isExpired()) {
+            tokenRepository.delete(resetToken);
+            throw new ResponseStatusException(HttpStatus.GONE, "Token sudah kadaluarsa!");
+        }
+
+        BaseUser user = userRepository.findByEmail(resetToken.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User tidak ditemukan!"));
+
+        user.setPassword(newPassword);
+        userRepository.save(user);
+        tokenRepository.delete(resetToken);
+    }
+
+    public String getUserDisplayName(String email) {
+        BaseUser user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Email tidak terdaftar!"));
+
+        if (user instanceof Client client) {
+            return client.getUsername();
+        } else if (user instanceof Psikiater psikiater) {
+            return psikiater.getNamaLengkap();
+        }
+        return "User";
+    }
 
     public UserResponseDTO registerClient(ClientCreateDTO dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {

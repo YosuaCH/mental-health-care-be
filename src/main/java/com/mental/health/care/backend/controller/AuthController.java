@@ -14,16 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.mental.health.care.backend.dto.ClientCreateDTO;
-import com.mental.health.care.backend.dto.PsikiaterCreateDTO;
-import com.mental.health.care.backend.dto.UserRequestLoginDTO;
-import com.mental.health.care.backend.dto.UserResponseDTO;
-import com.mental.health.care.backend.dto.WebResponseDTO;
+import com.mental.health.care.backend.dto.*;
 import com.mental.health.care.backend.service.UserService;
+import com.mental.health.care.backend.service.EmailService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -31,6 +30,32 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
     
     private final UserService userService;
+    private final EmailService emailService;
+
+    @PostMapping("/forgot-password")
+    public WebResponseDTO forgotPassword(@Valid @RequestBody ForgotPasswordRequestDTO dto) {
+        String token = userService.generateResetToken(dto.getEmail());
+        String name = userService.getUserDisplayName(dto.getEmail());
+        String resetLink = "http://127.0.0.1:5500/reset_password.html?token=" + token;
+
+        try {
+            emailService.sendResetPasswordEmail(dto.getEmail(), name, resetLink);
+        } catch (MessagingException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Gagal mengirim email: " + e.getMessage());
+        }
+
+        return WebResponseDTO.builder()
+                .message("Tautan pemulihan telah dikirim ke email Anda.")
+                .build();
+    }
+
+    @PostMapping("/reset-password")
+    public WebResponseDTO resetPassword(@Valid @RequestBody ResetPasswordRequestDTO dto) {
+        userService.resetPassword(dto.getToken(), dto.getNewPassword());
+        return WebResponseDTO.builder()
+                .message("Kata sandi berhasil diperbarui. Silakan login kembali.")
+                .build();
+    }
 
     @PostMapping("/register/client")
     public WebResponseDTO registerClient(@RequestBody ClientCreateDTO dto) {
