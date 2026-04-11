@@ -56,4 +56,51 @@ public class EmailService {
         helper.setText(content, true);
         mailSender.send(message);
     }
+
+    public void sendPaymentSuccessEmail(String to, String name, String doctorName, String amount, String transactionId) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setFrom("Mental Health Care <noreply@mentalhealthcare.com>");
+        helper.setTo(to);
+        helper.setSubject("Konfirmasi Pembayaran Berhasil - Mental Health Care");
+
+        String content = "<html>" +
+                "<head>" +
+                "<link href='https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap' rel='stylesheet'>" +
+                "<style>" +
+                "body { font-family: 'Poppins', Arial, sans-serif; background-color: #f8f8f8; color: #333; margin: 0; padding: 0; }" +
+                ".container { max-width: 600px; margin: 40px auto; padding: 40px; background-color: #ffffff; border-radius: 24px; text-align: left; }" +
+                ".logo { width: 80px; height: 80px; margin: 0 auto 30px auto; " +
+                "background-image: url('https://i.ibb.co.com/2Ydm0Vs5/logo-brand-removebg-preview.png'); " +
+                "background-size: contain; background-repeat: no-repeat; background-position: center; }" +
+                "h2 { color: #1e293b; font-size: 20px; margin-bottom: 20px; font-weight: 600; }" +
+                "p { color: #64748b; font-size: 14px; line-height: 1.6; margin-bottom: 15px; }" +
+                ".detail-item { font-size: 14px; margin-bottom: 8px; color: #1e293b; }" +
+                ".detail-label { color: #94a3b8; }" +
+                ".footer { text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 20px; margin-top: 40px; }" +
+                "</style>" +
+                "</head>" +
+                "<body>" +
+                "<div class='container'>" +
+                "<div class='logo'></div>" +
+                "<h2>Pembayaran Berhasil!</h2>" +
+                "<p>Halo " + name + ", transaksi Anda telah kami terima. Sesi konsultasi Anda sudah aktif sekarang.</p>" +
+                "<div style='margin: 30px 0;'>" +
+                "<div class='detail-item'><span class='detail-label'>ID Transaksi:</span> " + transactionId + "</div>" +
+                "<div class='detail-item'><span class='detail-label'>Layanan:</span> Konsultasi Privat</div>" +
+                "<div class='detail-item'><span class='detail-label'>Tenaga Ahli:</span> " + doctorName + "</div>" +
+                "<div class='detail-item' style='font-weight: 600; font-size: 16px; margin-top: 15px;'>Total Bayar: Rp " + amount + "</div>" +
+                "</div>" +
+                "<div class='footer'>" +
+                "Silakan kembali ke aplikasi untuk mulai obrolan dengan konselor Anda.<br>" +
+                "Butuh bantuan? Balas email ini atau hubungi tim support kami." +
+                "</div>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
+
+        helper.setText(content, true);
+        mailSender.send(message);
+    }
 }
