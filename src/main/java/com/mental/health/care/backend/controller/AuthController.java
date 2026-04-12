@@ -20,6 +20,7 @@ import com.mental.health.care.backend.service.EmailService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.RequiredArgsConstructor;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
@@ -31,12 +32,15 @@ public class AuthController {
     
     private final UserService userService;
     private final EmailService emailService;
+    
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
     @PostMapping("/forgot-password")
     public WebResponseDTO forgotPassword(@Valid @RequestBody ForgotPasswordRequestDTO dto) {
         String token = userService.generateResetToken(dto.getEmail());
         String name = userService.getUserDisplayName(dto.getEmail());
-        String resetLink = "http://127.0.0.1:5500/reset_password.html?token=" + token;
+        String resetLink = frontendUrl + "/reset_password.html?token=" + token;
 
         try {
             emailService.sendResetPasswordEmail(dto.getEmail(), name, resetLink);
