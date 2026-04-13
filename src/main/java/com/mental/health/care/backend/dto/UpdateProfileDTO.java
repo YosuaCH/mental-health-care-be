@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class UpdateProfileDTO {
     private String name;
     private String picture;
+    private Long hargaKonsultasi;
 }

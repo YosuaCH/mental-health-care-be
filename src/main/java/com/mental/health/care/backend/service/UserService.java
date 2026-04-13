@@ -232,6 +232,10 @@ public class UserService {
             user.setPicture(dto.getPicture());
         }
 
+        if (dto.getHargaKonsultasi() != null && user instanceof Psikiater psikiater) {
+            psikiater.setHargaKonsultasi(dto.getHargaKonsultasi());
+        }
+
         BaseUser savedUser = userRepository.save(user);
         return userMapper.toResponseDTO(savedUser);
     }
