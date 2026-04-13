@@ -79,9 +79,9 @@ public class AuthController {
     public WebResponseDTO registerPsikiater(@RequestBody PsikiaterCreateDTO dto) {
         UserResponseDTO userResponse = userService.registerPsikiater(dto);
         try {
-            emailService.sendWelcomeEmail(dto.getEmail(), dto.getNamaLengkap());
+            emailService.sendWelcomeMitraEmail(dto.getEmail(), dto.getNamaLengkap());
         } catch (MessagingException e) {
-            System.err.println("Gagal mengirim email selamat datang: " + e.getMessage());
+            System.err.println("Gagal mengirim email selamat datang mitra: " + e.getMessage());
         }
         return WebResponseDTO.builder()
                 .message("Registrasi Psikiater Berhasil")
