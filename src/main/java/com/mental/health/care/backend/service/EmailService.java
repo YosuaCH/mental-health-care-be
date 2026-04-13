@@ -103,4 +103,44 @@ public class EmailService {
         helper.setText(content, true);
         mailSender.send(message);
     }
+
+    public void sendWelcomeEmail(String to, String name) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setFrom("Mental Health Care <noreply@mentalhealthcare.com>");
+        helper.setTo(to);
+        helper.setSubject("Selamat Datang di Mental Health Care!");
+
+        String content = "<html>" +
+                "<head>" +
+                "<link href='https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap' rel='stylesheet'>" +
+                "<style>" +
+                "body { font-family: 'Poppins', Arial, sans-serif; background-color: #f8f8f8; color: #333; margin: 0; padding: 0; }" +
+                ".container { max-width: 600px; margin: 40px auto; padding: 40px; background-color: #ffffff; border-radius: 24px; text-align: left; }" +
+                ".logo { width: 80px; height: 80px; margin: 0 auto 30px auto; " +
+                "background-image: url('https://i.ibb.co.com/2Ydm0Vs5/logo-brand-removebg-preview.png'); " +
+                "background-size: contain; background-repeat: no-repeat; background-position: center; }" +
+                "h2 { color: #1e293b; font-size: 20px; margin-bottom: 20px; font-weight: 600;}" +
+                "p { color: #64748b; font-size: 14px; line-height: 1.6; margin-bottom: 25px; }" +
+                ".footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #f1f5f9; font-size: 12px; color: #94a3b8; text-align: center; }" +
+                "</style>" +
+                "</head>" +
+                "<body>" +
+                "<div class='container'>" +
+                "<div class='logo'></div>" +
+                "<h2>Halo " + name + "!</h2>" +
+                "<p>Selamat datang di Mental Health Care. Kami sangat senang Anda bergabung bersama kami.</p>" +
+                "<p>Akun Anda telah berhasil didaftarkan. Sekarang Anda dapat masuk ke platform dan mulai bercerita dengan aman serta berkonsultasi dengan para tenaga ahli kami.</p>" +
+                "<p>Jika Anda memiliki pertanyaan, tim support kami selalu siap membantu Anda.</p>" +
+                "<div class='footer'>" +
+                "Salam hangat,<br>Tim Mental Health Care" +
+                "</div>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
+
+        helper.setText(content, true);
+        mailSender.send(message);
+    }
 }

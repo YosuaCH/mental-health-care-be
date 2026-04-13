@@ -64,6 +64,11 @@ public class AuthController {
     @PostMapping("/register/client")
     public WebResponseDTO registerClient(@RequestBody ClientCreateDTO dto) {
         UserResponseDTO userResponse = userService.registerClient(dto);
+        try {
+            emailService.sendWelcomeEmail(dto.getEmail(), dto.getUsername());
+        } catch (MessagingException e) {
+            System.err.println("Gagal mengirim email selamat datang: " + e.getMessage());
+        }
         return WebResponseDTO.builder()
                 .message("Registrasi Client Berhasil")
                 .data(userResponse)
@@ -73,6 +78,11 @@ public class AuthController {
     @PostMapping("/register/psikiater")
     public WebResponseDTO registerPsikiater(@RequestBody PsikiaterCreateDTO dto) {
         UserResponseDTO userResponse = userService.registerPsikiater(dto);
+        try {
+            emailService.sendWelcomeEmail(dto.getEmail(), dto.getNamaLengkap());
+        } catch (MessagingException e) {
+            System.err.println("Gagal mengirim email selamat datang: " + e.getMessage());
+        }
         return WebResponseDTO.builder()
                 .message("Registrasi Psikiater Berhasil")
                 .data(userResponse)
