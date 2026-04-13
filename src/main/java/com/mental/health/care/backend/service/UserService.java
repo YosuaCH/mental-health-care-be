@@ -236,6 +236,12 @@ public class UserService {
         return userMapper.toResponseDTO(savedUser);
     }
 
+    public UserResponseDTO getUserById(String id) {
+        BaseUser user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User tidak ditemukan!"));
+        return userMapper.toResponseDTO(user);
+    }
+
     private String generateUniqueUsername(String email) {
         String baseUsername = email.split("@")[0];
         if (userRepository.findByUsername(baseUsername).isPresent()) {

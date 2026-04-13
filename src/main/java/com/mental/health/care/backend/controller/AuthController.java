@@ -110,7 +110,7 @@ public class AuthController {
             userResponse = userService.processGoogleUser(email, providerId);
         } 
         else if (principal instanceof UserResponseDTO localUser) {
-            userResponse = localUser;
+            userResponse = userService.getUserById(localUser.getId());
         } 
         else {
             return WebResponseDTO.builder()
