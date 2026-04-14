@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 
 import com.mental.health.care.backend.service.CustomOAuth2UserService;
@@ -24,8 +26,23 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+        requestHandler.setCsrfRequestAttributeName(null);
+
         http
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(requestHandler)
+                .ignoringRequestMatchers(
+                    "/auth/register/**",
+                    "/auth/login",
+                    "/auth/forgot-password",
+                    "/auth/reset-password",
+                    "/oauth2/**",
+                    "/ws/**",
+                    "/error"
+                )
+            )
             .cors(cors -> cors.configurationSource(request -> {
                 var config = new CorsConfiguration();
                 config.setAllowedOrigins(List.of("http://127.0.0.1:5500", "http://localhost:5500", frontendUrl));
@@ -49,9 +66,13 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
                 )
-                .defaultSuccessUrl(frontendUrl + "/dashboard.html", true)
+                .defaultSuccessUrl(frontendUrl + "/dashboard.html?auth=success", true)
                 .failureHandler((request, response, exception) -> {
-                    response.sendRedirect(frontendUrl + "/login.html?error");
+                    String errorType = "oauth_failed";
+                    if (exception.getMessage() != null && exception.getMessage().contains("manual_user")) {
+                        errorType = "manual";
+                    }
+                    response.sendRedirect(frontendUrl + "/login.html?error=" + errorType);
                 })
             )
             .logout(logout -> logout

@@ -24,6 +24,7 @@ import com.mental.health.care.backend.model.Role;
 import com.mental.health.care.backend.repository.UserRepository;
 import com.mental.health.care.backend.repository.PasswordResetTokenRepository;
 import com.mental.health.care.backend.model.PasswordResetToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.time.LocalDateTime;
@@ -41,6 +42,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final ClientMapper clientMapper;
     private final PsikiaterMapper psikiaterMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public void createPasswordResetToken(String email) {
         BaseUser user = userRepository.findByEmail(email)
@@ -95,11 +97,13 @@ public class UserService {
         BaseUser user = userRepository.findByEmail(resetToken.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User tidak ditemukan!"));
 
-        if (user.getPassword().equals(newPassword)) {
+        // Bandingkan password baru dengan hash yang tersimpan di DB
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sandi baru tidak boleh sama dengan sandi lama!");
         }
 
-        user.setPassword(newPassword);
+        // Simpan password baru dalam bentuk hash
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         tokenRepository.delete(resetToken);
     }
@@ -125,6 +129,8 @@ public class UserService {
         }
 
         Client client = clientMapper.toModel(dto);
+        // Hash password sebelum menyimpan ke database
+        client.setPassword(passwordEncoder.encode(dto.getPassword()));
         Client savedClient = userRepository.save(client);
         return userMapper.toResponseDTO(savedClient);
     }
@@ -138,6 +144,8 @@ public class UserService {
         if (userRepository.findByNoStr(dto.getNoStr()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nomor STR sudah terdaftar!");
         }
+        // Hash password sebelum menyimpan ke database
+        psikiater.setPassword(passwordEncoder.encode(dto.getPassword()));
         Psikiater savedPsikiater = userRepository.save(psikiater);
         return userMapper.toResponseDTO(savedPsikiater);
     }
@@ -153,7 +161,8 @@ public class UserService {
                 "Akun ini terdaftar via Google. Gunakan login Google.");
         }
 
-        if (!user.getPassword().equals(dto.getPassword())) {
+        // Gunakan BCrypt matches() bukan equals() untuk membandingkan password
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password salah!");
         }
 
