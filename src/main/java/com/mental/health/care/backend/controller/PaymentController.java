@@ -29,26 +29,26 @@ public class PaymentController {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<Map<String, Object>> getPaymentInfo(@RequestParam String noStr) {
+    public ResponseEntity<Map<String, Object>> getPaymentInfo(@RequestParam String patientId, @RequestParam String noStr) {
         Map<String, Object> response = new HashMap<>();
         response.put("namaPsikiater", paymentService.getNamaPsikiater(noStr));
         response.put("noStr", noStr);
         response.put("price", paymentService.getPrice(noStr));
         response.put("qrUrl", paymentService.generateQrUrl(noStr));
-        response.put("isPaid", paymentService.checkIsPaid(noStr));
+        response.put("isPaid", paymentService.checkIsPaid(patientId, noStr));
 
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/simulate-success")
     public ResponseEntity<Map<String, String>> simulateSuccess(@RequestParam String patientId, @RequestParam String noStr) {
-        paymentService.processPayment(patientId, noStr);
+        String transactionId = "MHC-" + (10000 + new Random().nextInt(90000));
+        paymentService.processPayment(patientId, noStr, transactionId);
         
         // Logika Pengiriman Email
         try {
             BaseUser user = userRepository.findById(patientId).orElse(null);
             if (user != null) {
-                String transactionId = "MHC-" + (10000 + new Random().nextInt(90000));
                 String doctorName = paymentService.getNamaPsikiater(noStr);
                 String price = paymentService.getPrice(noStr);
                 

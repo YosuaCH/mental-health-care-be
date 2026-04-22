@@ -43,6 +43,7 @@ public class UserService {
     private final ClientMapper clientMapper;
     private final PsikiaterMapper psikiaterMapper;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     public void createPasswordResetToken(String email) {
         BaseUser user = userRepository.findByEmail(email)
@@ -193,14 +194,21 @@ public class UserService {
                 userRepository.save(user);
             }
         } else {
+            String generatedUsername = generateUniqueUsername(email);
             user = Client.builder()
                     .email(email)
                     .providerId(providerId)
                     .authProvider(AuthProvider.GOOGLE)
                     .role(Role.CLIENT)
-                    .username(generateUniqueUsername(email))
+                    .username(generatedUsername)
                     .build();
             user = userRepository.save(user);
+
+            try {
+                emailService.sendWelcomeEmail(email, generatedUsername);
+            } catch (Exception e) {
+                System.err.println("Gagal mengirim welcome email ke: " + email + " - " + e.getMessage());
+            }
         }
 
         return userMapper.toResponseDTO(user);
